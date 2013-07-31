@@ -69,6 +69,10 @@ if !exists('g:rooter_patterns')
   let g:rooter_patterns = ['.git/', '.git', '_darcs/', '.hg/', '.bzr/', '.svn/']
 endif
 
+if !exists('g:rooter_merge_default_patterns')
+  let g:rooter_merge_default_patterns = 1
+endif
+
 if !exists('g:rooter_change_directory_for_non_project_files')
   let g:rooter_change_directory_for_non_project_files = 0
 endif
@@ -94,6 +98,11 @@ function! s:IsDirectory(pattern)
   return stridx(a:pattern, '/') != -1
 endfunction
 
+function! s:IsContainerDir(pattern)
+  return stridx(a:pattern, '/{}') == strlen(a:pattern) - 3
+endfunction
+
+
 " }}}
 
 " Core logic {{{
@@ -104,7 +113,13 @@ endfunction
 function! s:FindInCurrentPath(pattern)
   let dir_current_file = fnameescape(expand('%:p:h'))
 
-  if s:IsDirectory(a:pattern)
+  if s:IsContainerDir(a:pattern)
+    let match = finddir(expand(a:pattern)[:-3], dir_current_file . ';')
+    if empty(match)
+      return ''
+    endif
+    return dir_current_file[:stridx(dir_current_file, '/', strlen(match))]
+  elseif s:IsDirectory(a:pattern)
     let match = finddir(a:pattern, dir_current_file . ';')
     if empty(match)
       return ''
@@ -162,17 +177,17 @@ noremap <unique> <script> <Plug>RooterChangeToRootDirectory <SID>ChangeToRootDir
 noremap <SID>ChangeToRootDirectory :call <SID>ChangeToRootDirectory()<CR>
 
 command! Rooter :call <SID>ChangeToRootDirectory()
+
+if (g:rooter_merge_default_patterns == 1)
+  call extend(g:rooter_patterns, ['.git/', '.git', '_darcs/', '.hg/', '.bzr/', '.svn/'], 0)
+endif
+
 if !exists('g:rooter_manual_only')
   augroup rooter
     autocmd!
-    autocmd BufEnter *.rb,*.py,
-          \*.html,*.haml,*.erb,
-          \*.css,*.scss,*.sass,*.less,
-          \*.js,*.rjs,*.coffee,
-          \*.php,*.xml,*.yaml,*.yml,
-          \*.markdown,*.md
-          \ :Rooter
+    autocmd BufEnter * :Rooter
   augroup END
+
 endif
 
 " }}}
