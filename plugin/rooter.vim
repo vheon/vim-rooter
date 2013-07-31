@@ -77,6 +77,10 @@ if !exists('g:rooter_change_directory_for_non_project_files')
   let g:rooter_change_directory_for_non_project_files = 0
 endif
 
+if !exists('g:rooter_default_mappings')
+  let g:rooter_default_mappings = 0
+endif
+
 " }}}
 
 " Utility {{{
@@ -170,7 +174,7 @@ endfunction
 
 " Mappings and commands {{{
 
-if !hasmapto("<Plug>RooterChangeToRootDirectory")
+if g:rooter_default_mappings && !hasmapto("<Plug>RooterChangeToRootDirectory")
   map <silent> <unique> <Leader>cd <Plug>RooterChangeToRootDirectory
 endif
 noremap <unique> <script> <Plug>RooterChangeToRootDirectory <SID>ChangeToRootDirectory
@@ -178,7 +182,7 @@ noremap <SID>ChangeToRootDirectory :call <SID>ChangeToRootDirectory()<CR>
 
 command! Rooter :call <SID>ChangeToRootDirectory()
 
-if (g:rooter_merge_default_patterns == 1)
+if g:rooter_merge_default_patterns == 1
   call extend(g:rooter_patterns, ['.git/', '.git', '_darcs/', '.hg/', '.bzr/', '.svn/'], 0)
 endif
 
