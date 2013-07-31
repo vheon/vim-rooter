@@ -1,14 +1,16 @@
+# This is a fork repo
+The original project can be found at [](github.com/airblade/vim-rooter) but the
+modification that I applyed maybe are too personal so I preferred to keep this
+repo as a fork
+
 # Rooter
 
 Rooter is a Vim plugin which changes the working directory to the project root
 when you open a file.
 
-More accurately, it'll do this when you open a typical webapp file.  These files
-are identified by their extension.
-
 The project root is identified by the presence of known directory, such as a VCS
-directory, or file, such as a Rakefile.  Currently git, darcs, mercurial, bazaar,
-and subversion are supported.
+directory, or file, such as a Rakefile or a "Container" directory.  Currently
+git, darcs, mercurial, bazaar, and subversion are supported.
 
 
 ## Use
@@ -16,7 +18,7 @@ and subversion are supported.
 By default you don't need to do anything: vim-rooter will change the working
 directory automatically.
 
-You can always invoke vim-rooter manually with `<Leader>cd`.
+You can always invoke vim-rooter manually.
 
 
 ## Configuration
@@ -27,18 +29,6 @@ You can change the manual-invocation mapping by adding this to your `.vimrc`:
 
 where `<Leader>foo` is the mapping you want.
 
-You can change the file extensions which trigger vim-rooter with autocommands
-in `~/.vim/after/plugin/vim-rooter.vim`.  You'll need to create this file, and
-possibly the directories, yourself.
-
-To add a file extension, e.g. foo:
-
-    autocmd rooter BufEnter *.foo :Rooter
-
-To remove a file extension, e.g. js:
-
-    autocmd! rooter BufEnter *.js
-
 To stop vim-rooter changing directory automatically, add this to your `.vimrc`:
 
     let g:rooter_manual_only = 1
@@ -47,8 +37,28 @@ You can set your own directory and file patterns like this:
 
     let g:rooter_patterns = ['Rakefile', '.git/']
 
-Note this overwrites the default patterns.  Also note directories should have
-a trailing slash.
+Note: these patterns will be added to the default ones unless the
+`g:rooter_merge_default_patterns = 0` is set in your `.vimrc` Also note
+directories should have a trailing slash.
+
+### Container Directory
+
+If a pattern like this is set inside the `g:rooter_patterns`
+
+    let g:rooter_patterns = ['~/some/path/{}']
+
+With this directories:
+
+```
++-~/
+| +-some
+| | +-path
+| | | +-project1
+| | | +-project2
+```
+
+Open a file inside project1 would set ~/some/path/project1 as local current
+directory
 
 You can have vim-rooter locally change directory (`:lcd`) instead of
 changing directory (`:cd`) by adding this to your `.vimrc`:
@@ -63,5 +73,19 @@ If you would instead like vim-rooter to change to the file's directory, do this:
 
 ## Installation
 
-Install into `~/.vim/plugin/rooter.vim` or, if you're using Pathogen, into
-`~/.vim/bundle/rooter.vim`.
+### Manual Install
+Install the distributed files into your Vim script directory which is usually
+~/.vim/, or $HOME/vimfiles on Windows.
+
+### Pathogen
+```
+cd ~/.vim/bundle
+git clone git://github.com/vheon/vim-rooter.git
+```
+
+### Vundle
+```
+Bundle 'vheon/vim-rooter'
+```
+
+
