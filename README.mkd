@@ -1,7 +1,7 @@
 # This is a fork repo
 The original project can be found at [](github.com/airblade/vim-rooter) but the
 modification that I applyed maybe are too personal so I preferred to keep this
-repo as a fork
+repo as a fork for now
 
 # Rooter
 
@@ -20,32 +20,30 @@ directory automatically.
 
 You can always invoke vim-rooter manually.
 
+Note: `autochdir` will be disabled by this plugin
+
 
 ## Configuration
 
-You can change the manual-invocation mapping by adding this to your `.vimrc`:
+If you want to use this plugin manually you have to set the `g:rooter_manual_only` and define a mapping for `<Plug>(rooter-change-root-directory)` like this:
 
-    map <silent> <unique> <Leader>foo <Plug>RooterChangeToRootDirectory
+    map <silent> <unique> <Leader>foo <Plug>(rooter-change-root-directory)
 
 where `<Leader>foo` is the mapping you want.
 
-To stop vim-rooter changing directory automatically, add this to your `.vimrc`:
+You can add your own directory and file patterns like this:
 
-    let g:rooter_manual_only = 1
+    call rooter#extend_patterns(['Rakefile', '.git/'])
 
-You can set your own directory and file patterns like this:
+this will add the patterns to the default one.
 
-    let g:rooter_patterns = ['Rakefile', '.git/']
-
-Note: these patterns will be added to the default ones unless the
-`g:rooter_merge_default_patterns = 0` is set in your `.vimrc` Also note
-directories should have a trailing slash.
+Note: directories should have a trailing slash.
 
 ### Container Directory
 
-If a pattern like this is set inside the `g:rooter_patterns`
+If a pattern like this is set
 
-    let g:rooter_patterns = ['~/some/path/{}']
+    call rooter#extend_patterns(['~/some/path/{}'])
 
 With this directories:
 
@@ -60,10 +58,10 @@ With this directories:
 Open a file inside project1 would set ~/some/path/project1 as local current
 directory
 
-You can have vim-rooter locally change directory (`:lcd`) instead of
-changing directory (`:cd`) by adding this to your `.vimrc`:
+You can have vim-rooter change directory (`:cd`) instead of
+locally changing directory (`:lcd`) by adding this to your `.vimrc`:
 
-    let g:rooter_use_lcd = 1
+    let g:rooter_use_cd = 1
 
 When vim-rooter encounters a non-project file, it won't change directory by default.
 If you would instead like vim-rooter to change to the file's directory, do this:
@@ -87,5 +85,3 @@ git clone git://github.com/vheon/vim-rooter.git
 ```
 Bundle 'vheon/vim-rooter'
 ```
-
-
